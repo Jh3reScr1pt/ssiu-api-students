@@ -21,18 +21,6 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @PostMapping("student")
-    @ResponseStatus(HttpStatus.CREATED)
-    public StudentDTO postStudent(@RequestBody StudentDTO StudentDTO) {
-        return studentService.save(StudentDTO);
-    }
-
-    @PostMapping("students")
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<StudentDTO> postStudents(@RequestBody List<StudentDTO> studentEntities) {
-        return studentService.saveAll(studentEntities);
-    }
-
     @GetMapping("students")
     public List<StudentDTO> getStudents() {
         return studentService.findAll();
@@ -41,14 +29,9 @@ public class StudentController {
     @GetMapping("student/{id}")
     public ResponseEntity<StudentDTO> getStudent(@PathVariable String id) {
         StudentDTO StudentDTO = studentService.findOne(id);
-        if (StudentDTO == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        if (StudentDTO == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return ResponseEntity.ok(StudentDTO);
-    }
-
-    @GetMapping("students/{ids}")
-    public List<StudentDTO> getStudents(@PathVariable String ids) {
-        List<String> listIds = List.of(ids.split(","));
-        return studentService.findAll(listIds);
     }
 
     @GetMapping("students/count")
@@ -56,20 +39,10 @@ public class StudentController {
         return studentService.count();
     }
 
-    @DeleteMapping("student/{id}")
-    public Long deleteStudent(@PathVariable String id) {
-        return studentService.delete(id);
-    }
-
-    @DeleteMapping("students/{ids}")
-    public Long deleteStudents(@PathVariable String ids) {
-        List<String> listIds = List.of(ids.split(","));
-        return studentService.delete(listIds);
-    }
-
-    @DeleteMapping("students")
-    public Long deleteStudents() {
-        return studentService.deleteAll();
+    @PostMapping("student")
+    @ResponseStatus(HttpStatus.CREATED)
+    public StudentDTO postStudent(@RequestBody StudentDTO StudentDTO) {
+        return studentService.save(StudentDTO);
     }
 
     @PutMapping("student")
@@ -77,12 +50,58 @@ public class StudentController {
         return studentService.update(StudentDTO);
     }
 
-    @PutMapping("students")
-    public Long putStudent(@RequestBody List<StudentDTO> studentEntities) {
-        return studentService.update(studentEntities);
+    //@DeleteMapping("student/{id}")
+    //public Long deleteStudent(@PathVariable String id) {
+    //    return studentService.delete(id);
+    //}
+    @PutMapping("student/activate/state/{id}")
+    public long activateState(@PathVariable String id) {
+        return studentService.activateState(id);
     }
 
-    
+    @PutMapping("student/activate/state_app/{id}")
+    public long activateStateApp(@PathVariable String id) {
+        return studentService.activateStateApp(id);
+    }
+
+    @DeleteMapping("student/logical_delete/state/{id}")
+    public Long logicalDeleteState(@PathVariable String id) {
+        return studentService.logicalDeleteState(id);
+    }
+
+    @DeleteMapping("student/logical_delete/state_app/{id}")
+    public Long logicalDeleteStateApp(@PathVariable String id) {
+        return studentService.logicalDeleteStateApp(id);
+    }
+
+    // @PostMapping("students")
+    // @ResponseStatus(HttpStatus.CREATED)
+    // public List<StudentDTO> postStudents(@RequestBody List<StudentDTO>
+    // studentEntities) {
+    // return studentService.saveAll(studentEntities);
+    // }
+
+    // @GetMapping("students/{ids}")
+    // public List<StudentDTO> getStudents(@PathVariable String ids) {
+    // List<String> listIds = List.of(ids.split(","));
+    // return studentService.findAll(listIds);
+    // }
+
+    // @DeleteMapping("students/{ids}")
+    // public Long deleteStudents(@PathVariable String ids) {
+    // List<String> listIds = List.of(ids.split(","));
+    // return studentService.delete(listIds);
+    // }
+
+    // @DeleteMapping("students")
+    // public Long deleteStudents() {
+    // return studentService.deleteAll();
+    // }
+
+    // @PutMapping("students")
+    // public Long putStudent(@RequestBody List<StudentDTO> studentEntities) {
+    // return studentService.update(studentEntities);
+    // }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

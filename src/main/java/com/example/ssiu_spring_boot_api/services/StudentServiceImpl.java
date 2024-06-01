@@ -1,6 +1,7 @@
 package com.example.ssiu_spring_boot_api.services;
 
 import com.example.ssiu_spring_boot_api.dtos.StudentDTO;
+import com.example.ssiu_spring_boot_api.models.StudentEntity;
 import com.example.ssiu_spring_boot_api.repositories.StudentRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,10 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentDTO save(StudentDTO StudentDTO) {
-        return new StudentDTO(studentRepository.save(StudentDTO.toStudentEntity()));
+        StudentEntity studentEntity = StudentDTO.toStudentEntity();
+        studentEntity.setState(true);
+        studentEntity.setState_app(true);
+        return new StudentDTO(studentRepository.save(studentEntity));
     }
 
     @Override
@@ -72,6 +76,50 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public long update(List<StudentDTO> studentEntities) {
         return studentRepository.update(studentEntities.stream().map(StudentDTO::toStudentEntity).toList());
+    }
+
+    @Override
+    public long activateState(String id) {
+        StudentEntity studentEntity = studentRepository.findOne(id);
+        if (studentEntity != null) {
+            studentEntity.setState(true);
+            studentRepository.update(studentEntity);
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    public long activateStateApp(String id) {
+        StudentEntity studentEntity = studentRepository.findOne(id);
+        if (studentEntity != null) {
+            studentEntity.setState_app(true);
+            studentRepository.update(studentEntity);
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    public long logicalDeleteState(String id) {
+        StudentEntity studentEntity = studentRepository.findOne(id);
+        if (studentEntity != null) {
+            studentEntity.setState(false);
+            studentRepository.update(studentEntity);
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    public long logicalDeleteStateApp(String id) {
+        StudentEntity studentEntity = studentRepository.findOne(id);
+        if (studentEntity != null) {
+            studentEntity.setState_app(false);
+            studentRepository.update(studentEntity);
+            return 1;
+        }
+        return 0;
     }
 
     

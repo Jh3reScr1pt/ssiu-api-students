@@ -28,6 +28,13 @@ public interface StudentService {
 
     long update(List<StudentDTO> studentEntities);
 
+    long activateState(String id);
+
+    long activateStateApp(String id);
+
+    long logicalDeleteState(String id);
+
+    long logicalDeleteStateApp(String id);
     
 
 }
