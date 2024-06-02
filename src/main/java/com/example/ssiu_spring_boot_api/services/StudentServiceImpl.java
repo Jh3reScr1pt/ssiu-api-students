@@ -3,6 +3,8 @@ package com.example.ssiu_spring_boot_api.services;
 import com.example.ssiu_spring_boot_api.dtos.StudentDTO;
 import com.example.ssiu_spring_boot_api.models.StudentEntity;
 import com.example.ssiu_spring_boot_api.repositories.StudentRepository;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,14 +13,18 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
     public StudentDTO save(StudentDTO StudentDTO) {
         StudentEntity studentEntity = StudentDTO.toStudentEntity();
+        String encryptedPassword = passwordEncoder.encode(studentEntity.getPassword());
+        studentEntity.setPassword(encryptedPassword);
         studentEntity.setState(true);
         studentEntity.setState_app(true);
         return new StudentDTO(studentRepository.save(studentEntity));
@@ -120,6 +126,15 @@ public class StudentServiceImpl implements StudentService {
             return 1;
         }
         return 0;
+    }
+    
+    @Override
+    public boolean login(String email, String password) {
+        StudentEntity studentEntity = studentRepository.findByEmail_inst(email);
+        if (studentEntity == null) {
+            return false; // Usuario no encontrado
+        }
+        return passwordEncoder.matches(password, studentEntity.getPassword());
     }
 
     

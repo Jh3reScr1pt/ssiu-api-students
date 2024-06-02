@@ -125,4 +125,9 @@ public class MongoDBStudentRepository implements StudentRepository {
         return ids.stream().map(ObjectId::new).toList();
     }
 
+    @Override
+    public StudentEntity findByEmail_inst(String email_inst) {
+        return studentCollection.find(eq("email_inst", email_inst)).first();
+    }
+
 }

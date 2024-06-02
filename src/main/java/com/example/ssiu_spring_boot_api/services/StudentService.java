@@ -35,6 +35,8 @@ public interface StudentService {
     long logicalDeleteState(String id);
 
     long logicalDeleteStateApp(String id);
+
+    boolean login(String email, String password);
     
 
 }

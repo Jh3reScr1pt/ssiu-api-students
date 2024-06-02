@@ -30,5 +30,7 @@ public interface StudentRepository {
 
     long update(List<StudentEntity> studentEntities);
 
+    StudentEntity findByEmail_inst(String email_inst);
+
     
 }

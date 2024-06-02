@@ -74,6 +74,16 @@ public class StudentController {
         return studentService.logicalDeleteStateApp(id);
     }
 
+    @PostMapping("/auth")
+    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
+        boolean isAuthenticated = studentService.login(email, password);
+        if (isAuthenticated) {
+            return ResponseEntity.ok("Login exitoso");
+        } else {
+            return ResponseEntity.status(401).body("Credenciales inválidas");
+        }
+    }
+
     // @PostMapping("students")
     // @ResponseStatus(HttpStatus.CREATED)
     // public List<StudentDTO> postStudents(@RequestBody List<StudentDTO>
