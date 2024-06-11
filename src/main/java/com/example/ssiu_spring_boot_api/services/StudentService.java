@@ -3,6 +3,7 @@ package com.example.ssiu_spring_boot_api.services;
 import java.util.List;
 
 import com.example.ssiu_spring_boot_api.dtos.StudentDTO;
+import com.example.ssiu_spring_boot_api.models.StudentEntity;
 
 public interface StudentService {
 
@@ -35,6 +36,8 @@ public interface StudentService {
     long logicalDeleteState(String id);
 
     long logicalDeleteStateApp(String id);
+
+    StudentEntity findByEmail(String email);
 
     boolean login(String email, String password);
     

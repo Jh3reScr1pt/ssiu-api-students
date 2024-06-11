@@ -127,6 +127,11 @@ public class StudentServiceImpl implements StudentService {
         }
         return 0;
     }
+
+    @Override
+    public StudentEntity findByEmail(String email) {
+        return studentRepository.findByEmail_inst(email);
+    }
     
     @Override
     public boolean login(String email, String password) {

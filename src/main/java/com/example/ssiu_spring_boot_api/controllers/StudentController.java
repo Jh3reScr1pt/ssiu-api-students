@@ -1,6 +1,8 @@
 package com.example.ssiu_spring_boot_api.controllers;
 
 import com.example.ssiu_spring_boot_api.dtos.StudentDTO;
+import com.example.ssiu_spring_boot_api.models.StudentEntity;
+import com.example.ssiu_spring_boot_api.security.JwtTokenUtil;
 import com.example.ssiu_spring_boot_api.services.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,17 +10,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api")
 public class StudentController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(StudentController.class);
     private final StudentService studentService;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService, JwtTokenUtil jwtTokenUtil) {
         this.studentService = studentService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @GetMapping("students")
@@ -74,11 +82,21 @@ public class StudentController {
         return studentService.logicalDeleteStateApp(id);
     }
 
-    @PostMapping("/auth")
+    @PostMapping("student/auth")
     public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password) {
         boolean isAuthenticated = studentService.login(email, password);
         if (isAuthenticated) {
-            return ResponseEntity.ok("Login exitoso");
+            StudentEntity studentEntity = studentService.findByEmail(email);
+            String token = jwtTokenUtil.generateToken(studentEntity.getId().toString());
+            StudentDTO studentData = studentService.findOne(studentEntity.getId().toString());
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            response.put("id", studentData.id());
+            response.put("name", studentData.name());
+            response.put("lastname", studentData.lastname());
+            response.put("email_inst", studentData.email_inst());
+            response.put("career", studentData.career());
+            return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(401).body("Credenciales inválidas");
         }
